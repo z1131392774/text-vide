@@ -1,10 +1,4 @@
-import {
-  Box,
-  Button,
-  TextField,
-  ToggleButton,
-  ToggleButtonGroup,
-} from '@mui/material';
+import { Box, Button, TextField } from '@mui/material';
 import { Reducer, useEffect, useReducer } from 'react';
 import { textVide } from 'text-vide';
 import logo from './logo.png';
@@ -18,7 +12,6 @@ const INITIAL_INPUT =
 type Edits = {
   firstSep: string;
   secondSep: string;
-  fixationPoint: string;
   ignoreHtmlTag: string;
   ignoreHtmlEntity: string;
   input: string;
@@ -27,7 +20,6 @@ type Edits = {
 const defaultEdits: Edits = {
   firstSep: '<b>',
   secondSep: '</b>',
-  fixationPoint: '1',
   ignoreHtmlTag: '1', // 1 = true, 0 = false
   ignoreHtmlEntity: '1', // 1 = true, 0 = false
   input: INITIAL_INPUT,
@@ -36,7 +28,6 @@ const defaultEdits: Edits = {
 const storeEdits = ({
   firstSep,
   secondSep,
-  fixationPoint,
   input,
   ignoreHtmlTag,
   ignoreHtmlEntity,
@@ -44,7 +35,6 @@ const storeEdits = ({
   const search = [
     `firstSep=${encodeURIComponent(firstSep)}`,
     `secondSep=${encodeURIComponent(secondSep)}`,
-    `fixationPoint=${encodeURIComponent(fixationPoint)}`,
     `input=${encodeURIComponent(input)}`,
     `ignoreHtmlTag=${encodeURIComponent(ignoreHtmlTag)}`,
     `ignoreHtmlEntity=${encodeURIComponent(ignoreHtmlEntity)}`,
@@ -99,7 +89,6 @@ type Action = {
   type:
     | 'FIRST_SEP'
     | 'SECOND_SEP'
-    | 'FIXATION_POINT'
     | 'INPUT'
     | 'HIGHLIGHTED_TEXT'
     | 'COPIED'
@@ -117,10 +106,6 @@ const reducer: Reducer<State, Action> = (state, { type, value, copied }) => {
 
   if (type === 'SECOND_SEP') {
     return { ...state, secondSep: value };
-  }
-
-  if (type === 'FIXATION_POINT') {
-    return { ...state, fixationPoint: value };
   }
 
   if (type === 'INPUT') {
@@ -167,7 +152,6 @@ const App = () => {
     firstSep,
     secondSep,
     input,
-    fixationPoint,
     copiedEffect,
     highlightedText,
     ignoreHtmlTag,
@@ -178,7 +162,6 @@ const App = () => {
     const store = setTimeout(() => {
       const options = {
         sep: [firstSep, secondSep],
-        fixationPoint: parseInt(fixationPoint),
         ignoreHtmlTag: ignoreHtmlTag === '1',
         ignoreHtmlEntity: ignoreHtmlEntity === '1',
       };
@@ -195,21 +178,13 @@ const App = () => {
         firstSep,
         secondSep,
         input,
-        fixationPoint,
         ignoreHtmlTag,
         ignoreHtmlEntity,
       });
     }, DEBOUNCE_TIMEOUT);
 
     return () => clearTimeout(store);
-  }, [
-    firstSep,
-    secondSep,
-    input,
-    fixationPoint,
-    ignoreHtmlTag,
-    ignoreHtmlEntity,
-  ]);
+  }, [firstSep, secondSep, input, ignoreHtmlTag, ignoreHtmlEntity]);
 
   const copyUrl = () => {
     const { href: url } = location;
@@ -234,7 +209,6 @@ const App = () => {
     JSON.stringify({
       firstSep,
       secondSep,
-      fixationPoint,
       input,
       ignoreHtmlTag,
       ignoreHtmlEntity,
@@ -289,23 +263,6 @@ const App = () => {
           </section>
 
           <section className="flex gap-2 flex-wrap">
-            <ToggleButtonGroup
-              size="small"
-              exclusive
-              color="primary"
-              value={fixationPoint}
-              onChange={(_, value) =>
-                value &&
-                dispatchState({ type: 'FIXATION_POINT', value, copied: false })
-              }
-            >
-              <ToggleButton value="1">fixation - 1</ToggleButton>
-              <ToggleButton value="2">2</ToggleButton>
-              <ToggleButton value="3">3</ToggleButton>
-              <ToggleButton value="4">4</ToggleButton>
-              <ToggleButton value="5">5</ToggleButton>
-            </ToggleButtonGroup>
-
             <Button
               variant="outlined"
               color="success"
